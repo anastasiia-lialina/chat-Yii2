@@ -2,37 +2,99 @@
 
 namespace app\controllers;
 
+use app\models\Users;
+use Yii;
+use yii\data\ActiveDataProvider;
+use yii\swiftmailer\Message;
+use yii\web\Controller;
 use yii\filters\AccessControl;
 use app\models\Messages;
-use yii\data\ActiveDataProvider;
+use app\models\search\MessagesSearch;
+use yii\web\HttpException;
 
-class MessagesController extends \yii\web\Controller
+class MessagesController extends Controller
 {
 
-    public function behaviors()
+    /**
+     * @return array[]
+     */
+    public function behaviors() : array
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index'],
+                'class' => AccessControl::class,
+                'only' => ['index', 'toggle-ban' , 'banned-messages'],
                 'rules' => [
                     [
                         'actions' => ['index'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['?', '@'],
+                    ],
+                    [
+                        'actions' => ['toggle-ban'],
+                        'allow' => true,
+                        'roles' => ['banMessage'],
+                    ],
+                    [
+                        'actions' => ['banned-messages'],
+                        'allow' => true,
+                        'roles' => ['viewBannedMessages'],
                     ],
                 ],
             ],
         ];
     }
 
-    public function actionIndex()
+    /**
+     * Вывод сообщений и добавление нового
+     * @return string
+     */
+    public function actionIndex() : string
     {
-        $messages = Messages::find()->orderBy('created_at')->all();
+        $model = new Messages();
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                $model = new Messages();
+            }
+        }
+
+        $searchModel = new MessagesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
 
         return $this->render('index', [
-            'messages' => $messages,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model
         ]);
     }
 
+    /**
+     * @param int $id
+     * @param bool $visible
+     */
+    public function actionToggleBan(int $id, bool $visible)
+    {
+        $model = Messages::findOne($id);
+        $model->is_visible = $visible;
+
+        if ($model->save()) {
+            $this->goBack();
+        }
+    }
+
+    public function actionBannedMessages()
+    {
+
+        $searchModel = new MessagesSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere('is_visible = false');
+
+        return $this->render('banned', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 }

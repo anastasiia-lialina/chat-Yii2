@@ -31,7 +31,7 @@ class Messages extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'created_at'], 'required'],
+            [['text'], 'required'],
             [['user_id', 'created_at'], 'default', 'value' => null],
             [['user_id', 'created_at'], 'integer'],
             [['text'], 'string'],
@@ -47,10 +47,11 @@ class Messages extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'text' => 'Text',
-            'is_visible' => 'Is Visible',
-            'created_at' => 'Created At',
+            'user_id' => 'ID автора',
+            'text' => 'Сообщение',
+            'is_visible' => 'Бан',
+            'created_at' => 'Время отправления',
+            'author' => 'Автор'
         ];
     }
 
@@ -61,11 +62,17 @@ class Messages extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::class, ['id' => 'user_id']);
     }
 
-    public function getAllMessages()
+    public function beforeSave($insert)
     {
-        return self::find()->orderBy('created_at')->all();
+        if ($insert) {
+            $this->user_id = Yii::$app->getUser()->id;
+            $this->is_visible = true;
+            $this->created_at = time();
+        }
+
+        return true;
     }
 }

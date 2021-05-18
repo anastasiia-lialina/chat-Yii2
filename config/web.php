@@ -17,6 +17,13 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'hia2sA_rlkdWncGAXWOAvr7UigYpnOZJ',
+            'csrfParam' => '_csrf-api',
+            'parsers' => [
+                'application/json' => [
+                    'class' => \yii\web\JsonParser::class,
+                    'asArray' => true,
+                ],
+            ],
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -51,6 +58,7 @@ $config = [
         ],
         'formatter' => [
             'dateFormat' => 'dd.MM.yyyy',
+            'datetimeFormat' => 'dd.MM.yyyy hh:mm:ss',
             'decimalSeparator' => ',',
             'thousandSeparator' => ' ',
         ],

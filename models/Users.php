@@ -4,6 +4,7 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\rbac\Role;
 use yii\web\IdentityInterface;
 /**
  * Users model
@@ -148,5 +149,17 @@ class Users extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function isAdmin()
+    {
+        $authManager = Yii::$app->authManager;
+        $modelRoles = $authManager->getRolesByUser($this->id);
+        foreach ($modelRoles as $role) {
+            if ($role->name == 'admin') {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -41,7 +41,10 @@ AppAsset::register($this);
         'items' => array_filter([
             ['label' => 'Сообщения', 'url' => ['/messages/index']],
             Yii::$app->user->can('viewAdminPage') ?
-                ['label' => 'Панель Администратора', 'url' => ['/admin']] :
+                ['label' => 'Пользователи', 'url' => ['/admin']] :
+                false,
+            Yii::$app->user->can('viewBannedMessages') ?
+                ['label' => 'Заблокированные сообщения', 'url' => ['/messages/banned-messages']] :
                 false,
             ['label' => 'Регистрация', 'url' => ['site/signup'], 'visible' => Yii::$app->user->isGuest],
             Yii::$app->user->isGuest ? (
