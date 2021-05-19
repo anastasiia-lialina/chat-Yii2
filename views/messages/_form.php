@@ -1,34 +1,17 @@
 <?php
 
+use app\models\Messages;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\Messages */
+/* @var $model Messages */
 /* @var $form yii\widgets\ActiveForm */
 /* @var $answer boolean */
 ?>
 
-<?php
-//todo переметить в отдельный файл
-$this->registerJs(
-'$("document").ready(function(){
-        $("#new_message").on("pjax:end", function() {
-            $.pjax.reload({container:"#messages"});
-        });
-    });'
-);
-?>
-
 <div class="send-wrap">
-    <?php yii\widgets\Pjax::begin(['id' => 'new_message']) ?>
-
-    <?php $form = ActiveForm::begin([
-        'options' => [
-            'data-pjax' => true,
-        ]]);
-    ?>
+    <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'text')
              ->textarea([
@@ -43,6 +26,5 @@ $this->registerJs(
     </div>
 
     <?php ActiveForm::end(); ?>
-    <?php Pjax::end(); ?>
 
 </div>

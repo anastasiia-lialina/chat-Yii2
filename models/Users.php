@@ -155,6 +155,7 @@ class Users extends ActiveRecord implements IdentityInterface
     {
         $authManager = Yii::$app->authManager;
         $modelRoles = $authManager->getRolesByUser($this->id);
+
         foreach ($modelRoles as $role) {
             if ($role->name == 'admin') {
                 return true;

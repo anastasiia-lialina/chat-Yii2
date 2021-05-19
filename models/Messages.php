@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "messages".
@@ -36,7 +37,7 @@ class Messages extends \yii\db\ActiveRecord
             [['user_id', 'created_at'], 'integer'],
             [['text'], 'string'],
             [['is_visible'], 'boolean'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -51,14 +52,14 @@ class Messages extends \yii\db\ActiveRecord
             'text' => 'Сообщение',
             'is_visible' => 'Бан',
             'created_at' => 'Время отправления',
-            'author' => 'Автор'
+            'user.username' => 'Автор'
         ];
     }
 
     /**
      * Gets query for [[User]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -74,5 +75,17 @@ class Messages extends \yii\db\ActiveRecord
         }
 
         return true;
+    }
+
+    /**
+     * Блокировака/ Разблокировка сообщения
+     * @param bool $visible
+     * @return bool
+     */
+    public function toggleBan(bool $visible)
+    {
+        $this->is_visible = $visible;
+
+        return $this->save();
     }
 }

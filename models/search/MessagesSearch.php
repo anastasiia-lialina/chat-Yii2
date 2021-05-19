@@ -57,7 +57,7 @@ class MessagesSearch extends Messages
             'query' => $query,
         ]);
 
-        $dataProvider->sort->attributes['author'] = [
+        $dataProvider->sort->attributes['user.username'] = [
             'asc' => [Users::tableName().'.username' => SORT_ASC],
             'desc' => [Users::tableName().'.username' => SORT_DESC],
         ];

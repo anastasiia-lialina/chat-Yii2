@@ -2,15 +2,11 @@
 
 namespace app\controllers;
 
-use app\models\Users;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\swiftmailer\Message;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use app\models\Messages;
 use app\models\search\MessagesSearch;
-use yii\web\HttpException;
 
 class MessagesController extends Controller
 {
@@ -23,17 +19,12 @@ class MessagesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index', 'toggle-ban' , 'banned-messages'],
+                'only' => ['toggle-ban' , 'banned-messages'],
                 'rules' => [
-                    [
-                        'actions' => ['index'],
-                        'allow' => true,
-                        'roles' => ['?', '@'],
-                    ],
                     [
                         'actions' => ['toggle-ban'],
                         'allow' => true,
-                        'roles' => ['banMessage'],
+                        'roles' => ['banMessage', 'unbanMessage'],
                     ],
                     [
                         'actions' => ['banned-messages'],
@@ -53,8 +44,8 @@ class MessagesController extends Controller
     {
         $model = new Messages();
 
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
-            if ($model->save()) {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->user->can('sendMessage')) {
+            if($model->save()){
                 $model = new Messages();
             }
         }
@@ -71,19 +62,37 @@ class MessagesController extends Controller
     }
 
     /**
+     * Блокировка сообщений
      * @param int $id
-     * @param bool $visible
      */
-    public function actionToggleBan(int $id, bool $visible)
+    public function actionBanMessage(int $id)
     {
         $model = Messages::findOne($id);
-        $model->is_visible = $visible;
 
-        if ($model->save()) {
+        if ($model->toggleBan(false)) {
             $this->goBack();
         }
     }
 
+    /**
+     * Разблокировка сообщений
+     * @param $id
+     */
+    public function actionUnbanMessage($id)
+    {
+        $model = Messages::findOne($id);
+
+        if ($model->toggleBan(true))
+        {
+            $this->redirect('banned-messages');
+        }
+
+    }
+
+    /**
+     * Список заблокированных сообщения
+     * @return string
+     */
     public function actionBannedMessages()
     {
 

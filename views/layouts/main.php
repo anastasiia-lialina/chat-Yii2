@@ -9,7 +9,6 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-use mdm\admin\components\MenuHelper ;
 
 AppAsset::register($this);
 ?>
@@ -40,12 +39,8 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => array_filter([
             ['label' => 'Сообщения', 'url' => ['/messages/index']],
-            Yii::$app->user->can('viewAdminPage') ?
-                ['label' => 'Пользователи', 'url' => ['/admin']] :
-                false,
-            Yii::$app->user->can('viewBannedMessages') ?
-                ['label' => 'Заблокированные сообщения', 'url' => ['/messages/banned-messages']] :
-                false,
+            ['label' => 'Пользователи', 'url' => ['/admin'], 'visible' => Yii::$app->user->can('viewAdminPage')],
+            ['label' => 'Заблокированные сообщения', 'url' => ['/messages/banned-messages'], 'visible' => Yii::$app->user->can('viewBannedMessages')],
             ['label' => 'Регистрация', 'url' => ['site/signup'], 'visible' => Yii::$app->user->isGuest],
             Yii::$app->user->isGuest ? (
             ['label' => 'Войти', 'url' => ['/site/login']]
@@ -76,8 +71,6 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
 

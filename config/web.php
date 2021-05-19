@@ -1,5 +1,7 @@
 <?php
 
+use yii\web\JsonParser;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -20,7 +22,7 @@ $config = [
             'csrfParam' => '_csrf-api',
             'parsers' => [
                 'application/json' => [
-                    'class' => \yii\web\JsonParser::class,
+                    'class' => JsonParser::class,
                     'asArray' => true,
                 ],
             ],
@@ -64,26 +66,38 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+            'defaultRoles' => [
+                'guest'
+            ]
         ],
 
     ],
     'modules' => [
         'admin' => [
             'class' => 'mdm\admin\Module',
-            'layout' => 'left-menu',
+            'layout' => 'top-menu',
             'mainLayout' => '@app/views/layouts/main.php',
+            'menus' => [
+                'assignment' => [
+                    'label' => 'Пользователи'
+                ],
+                'route' => null,
+                'permission' => null,
+                'rule' => null,
+                'role' => null
+            ],
+            'controllerMap' => [
+                'assignment' => [
+                    'class' => 'mdm\admin\controllers\AssignmentController',
+                    'userClassName' => 'app\models\Users',
+                    'usernameField' => 'username',
+                ],
+            ],
         ]
     ],
     'as access' => [
         'class' => 'mdm\admin\components\AccessControl',
-        'allowActions' => [
-            //TODO УДлить строоки ниже перед выгрузкой
-            'gii/*',
-            'admin/*',
-            'site/*',
-            'messages/*',
-            /* Тут перечисляем экшены доступные всем (и гостям)*/
-        ]
+        'allowActions' => []
     ],
     'params' => $params,
 ];

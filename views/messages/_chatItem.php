@@ -1,6 +1,5 @@
 <?php
     use yii\helpers\Html;
-    use yii\helpers\HtmlPurifier;
 ?>
 
 <div class="media msg <?= $model->user->isAdmin() ? 'admin-msg': '' ?>">
@@ -15,7 +14,7 @@
             if ($model->is_visible) {
                 echo Html::a(
                     'Скрыть',
-                    ['/messages/toggle-ban', 'id' => $model->id, 'visible' => false],
+                    ['/messages/ban-message', 'id' => $model->id],
                     [
                         'data'  => [
                             'pjax'  => 0,

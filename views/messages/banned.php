@@ -3,6 +3,7 @@
 use app\models\search\MessagesSearch;
 use yii\helpers\Html;
 use yii\grid\GridView;
+
 /* @var $this yii\web\View
 * @var $searchModel MessagesSearch;
 * @var $dataProvider yii\data\ActiveDataProvider
@@ -21,14 +22,25 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'id',
-            /*['attribute' => 'author',
-                'label' => 'Автор',
-                'value' => function($model) {
-                    return $model->user->username;
-                }
-            ],*/
             'user.username',
             'text:ntext',
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{unban-message}',
+                'buttons' => [
+                    'unban-message' => function ($url) {
+                        return Html::a(
+                            'Разблокировать',
+                            $url,
+                            [
+                                'data'  => [
+                                    'pjax'  => 0,
+                                    'method'     => 'post',
+                                ],
+                            ]
+                        );
+                    },
+                ]
+            ]
         ],
     ]); ?>
 </div>
