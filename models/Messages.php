@@ -49,10 +49,11 @@ class Messages extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'ID автора',
-            'text' => 'Сообщение',
-            'is_visible' => 'Бан',
-            'created_at' => 'Время отправления',
-            'user.username' => 'Автор'
+            'text' => Yii::t('common', 'Message'),
+            'is_visible' => Yii::t('common', 'Is visible'),
+            'created_at' => Yii::t('common', 'Date and time'),
+            'date' => Yii::t('common', 'Date and time'),
+            'username' => Yii::t('common', 'Username'),
         ];
     }
 
@@ -64,6 +65,20 @@ class Messages extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * имя автора сообщений
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->user->username;
+    }
+
+    public function getDate()
+    {
+        return Yii::$app->formatter->asDatetime($this->created_at);
     }
 
     public function beforeSave($insert)

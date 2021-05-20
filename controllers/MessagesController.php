@@ -44,9 +44,17 @@ class MessagesController extends Controller
     {
         $model = new Messages();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->user->can('sendMessage')) {
-            if($model->save()){
-                $model = new Messages();
+        $post = Yii::$app->request->post();
+
+        if (!empty($post)) {
+            if (Yii::$app->user->can('sendMessage')){
+                if ($model->load(Yii::$app->request->post()) && $model->save()){
+                    $model = new Messages();
+                } else {
+                    Yii::$app->session->setFlash('error', Yii::t('common','An error has occurred'));
+                }
+            }else{
+                Yii::$app->session->setFlash('error', Yii::t('common', 'Access denied'));
             }
         }
 
@@ -99,7 +107,7 @@ class MessagesController extends Controller
         $searchModel = new MessagesSearch();
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere('is_visible = false');
+        $dataProvider->query->andWhere(['is_visible' => false]);
 
         return $this->render('banned', [
             'searchModel' => $searchModel,

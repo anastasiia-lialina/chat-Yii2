@@ -11,6 +11,7 @@ $config = [
     'language' => 'ru-RU',
     'name' => 'Chat',
     'homeUrl' => '/messages/index',
+    'defaultRoute' => '/messages/index',
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -59,8 +60,10 @@ $config = [
             ],
         ],
         'formatter' => [
+            'defaultTimeZone' => 'UTC',
+            'timeZone' => 'Europe/Moscow',
             'dateFormat' => 'dd.MM.yyyy',
-            'datetimeFormat' => 'dd.MM.yyyy hh:mm:ss',
+            'datetimeFormat' => 'php:d.m.Y H:i:s',
             'decimalSeparator' => ',',
             'thousandSeparator' => ' ',
         ],
@@ -69,6 +72,15 @@ $config = [
             'defaultRoles' => [
                 'guest'
             ]
+        ],
+        'i18n' => [
+            'translations' => [
+                'common*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/languages',
+                    'sourceLanguage' => 'en-US'
+                ],
+            ],
         ],
 
     ],

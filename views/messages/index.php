@@ -11,7 +11,7 @@ use app\models\search\MessagesSearch;
 use yii\widgets\ListView;
 
 ?>
-<h1>Чат</h1>
+<h1><?= Yii::t('common', 'Chat') ?></h1>
 
 <div class="container">
     <div class="row">

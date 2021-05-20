@@ -7,21 +7,40 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Messages;
+use kartik\daterange\DateRangeBehavior;
 
 /**
  * MessagesSearch represents the model behind the search form of `app\models\Messages`.
  */
 class MessagesSearch extends Messages
 {
+    public $username;
+    public $date;
+    public $from_date;
+    public $to_date;
+
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'date',
+                'dateStartAttribute' => 'from_date',
+                'dateEndAttribute' => 'to_date',
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'user_id', 'created_at'], 'integer'],
-            [['text'], 'safe'],
+            [['text', 'username','created_at','id', 'user_id'], 'safe'],
             [['is_visible'], 'boolean'],
+            [['date'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -57,30 +76,46 @@ class MessagesSearch extends Messages
             'query' => $query,
         ]);
 
-        $dataProvider->sort->attributes['user.username'] = [
-            'asc' => [Users::tableName().'.username' => SORT_ASC],
-            'desc' => [Users::tableName().'.username' => SORT_DESC],
-        ];
-
-        $dataProvider->setSort(['defaultOrder' => ['created_at' => SORT_DESC]]);
+        $dataProvider->setSort([
+            'attributes' => [
+                'id',
+                'is_visible',
+                'created_at',
+                'date' => [
+                    'asc' => ['created_at' => SORT_ASC],
+                    'desc' => ['created_at' => SORT_DESC]
+                ],
+                'username' => [
+                    'asc' => [Users::tableName().'.username' => SORT_ASC],
+                    'desc' => [Users::tableName().'.username' => SORT_DESC],
+                ],
+            ],
+            'defaultOrder' => ['created_at' => SORT_DESC]
+        ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+           // $query->where('0=1');
             return $dataProvider;
         }
+
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'is_visible' => $this->is_visible,
-            'created_at' => $this->created_at,
+            'is_visible' => $this->is_visible
         ]);
 
-        $query->andFilterWhere(['ilike', 'text', $this->text]);
+        if($this->date){
+            $query->andFilterWhere(['>=', 'messages.created_at', $this->from_date])
+                ->andFilterWhere(['<', 'messages.created_at', $this->to_date]);
+        }
+
+            $query->andFilterWhere(['ilike', 'text', $this->text])
+                ->andFilterWhere(['ilike', 'username', $this->username]);
 
         return $dataProvider;
     }

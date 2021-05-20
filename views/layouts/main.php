@@ -38,10 +38,10 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => array_filter([
-            ['label' => 'Сообщения', 'url' => ['/messages/index']],
-            ['label' => 'Пользователи', 'url' => ['/admin'], 'visible' => Yii::$app->user->can('viewAdminPage')],
-            ['label' => 'Заблокированные сообщения', 'url' => ['/messages/banned-messages'], 'visible' => Yii::$app->user->can('viewBannedMessages')],
-            ['label' => 'Регистрация', 'url' => ['site/signup'], 'visible' => Yii::$app->user->isGuest],
+            ['label' => Yii::t('common', 'Messages'), 'url' => ['/messages/index']],
+            ['label' => Yii::t('common', 'Users'), 'url' => ['/admin'], 'visible' => Yii::$app->user->can('viewAdminPage')],
+            ['label' => Yii::t('common', 'Blocked messages'), 'url' => ['/messages/banned-messages'], 'visible' => Yii::$app->user->can('viewBannedMessages')],
+            ['label' => Yii::t('common', 'Signup'), 'url' => ['site/signup'], 'visible' => Yii::$app->user->isGuest],
             Yii::$app->user->isGuest ? (
             ['label' => 'Войти', 'url' => ['/site/login']]
             ) : (

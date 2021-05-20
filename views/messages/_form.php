@@ -11,18 +11,18 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="send-wrap">
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'send-message-form']); ?>
 
     <?= $form->field($model, 'text')
              ->textarea([
                  'rows' => 3,
                  'class' => "form-control send-message",
              ])
-             ->label('Введите сообщение');
+             ->label(Yii::t('common', 'Message'));
     ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Отправить') , ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('common', 'Send') , ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

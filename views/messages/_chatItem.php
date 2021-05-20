@@ -1,12 +1,14 @@
 <?php
     use yii\helpers\Html;
+
+    $formatter = Yii::$app->formatter;
 ?>
 
 <div class="media msg <?= $model->user->isAdmin() ? 'admin-msg': '' ?>">
     <div class="media-body">
-        <small class="pull-right time"><i class="fa fa-clock-o"></i><?= date('d.m.Y H:m:i', $model->created_at) ?></small>
+        <small class="pull-right time"><i class="fa fa-clock-o"></i><?= $formatter->asDatetime($model->created_at) ?></small>
         <h5 class="media-heading"><?= Html::encode($model->user->username) ?></h5>
-        <small class="col-lg-10"><?= $model->text ?></small>
+        <small class="col-lg-10"><p><?= $formatter->asNtext($model->text) ?></p></small>
     </div>
     <small class="pull-right">
         <?php
